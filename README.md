@@ -33,9 +33,12 @@ The 30 Simple Workouts Training Plan | Built with ReactJS & FantaCSS
 ```bash
 src/
 ├── components/
+│   ├── Hero.jsx             # Gives instructions on training.
 │   ├── Grid.jsx             # Renders all training day cards
 │   ├── WorkoutCard.jsx      # Handles workout UI, input, and logic
 │   ├── Modal.jsx            # Popup for exercise descriptions
+│   ├── Layout.jsx           # Sets the layout of the app
 ├── utils/
 │   └── index.js             # Contains `workoutProgram` and `exerciseDescriptions`
 ├── assets/                  # Icons, custom styles, etc.
+
