@@ -43,6 +43,176 @@ h3,.training-plan-grid {
     padding-top: 2rem;
 }
 
+.planner-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-top: 1.5rem;
+}
+
+.planner-copy,
+.planner-controls,
+.planner-results,
+.planner-panel,
+.planner-tip {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.planner-eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-size: 0.75rem;
+    color: var(--color-link);
+    font-weight: 700;
+}
+
+.planner-fieldset {
+    max-width: 100%;
+    width: 100%;
+    padding: 1rem;
+}
+
+.planner-option-grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 0.5rem;
+}
+
+.planner-option {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 100%;
+}
+
+.planner-option span {
+    font-weight: 500;
+}
+
+.planner-days {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+}
+
+.planner-day-button {
+    min-width: 96px;
+}
+
+.planner-day-button.is-active {
+    color: var(--background-primary);
+    background: var(--color-link);
+    border-color: var(--color-link);
+}
+
+.planner-day-button.is-active:hover {
+    transform: translate(2px, 2px);
+}
+
+.planner-result-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.planner-columns {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.planner-panel {
+    background: var(--background-primary);
+    border: 1px solid var(--border-primary);
+    border-radius: var(--border-radius-large);
+    padding: 1rem;
+}
+
+.planner-panel ul,
+.planner-results ul {
+    padding-left: 0;
+}
+
+.planner-panel li,
+.planner-results li {
+    list-style: none;
+    position: relative;
+    padding-left: 1rem;
+}
+
+.planner-panel li::before,
+.planner-results li::before {
+    content: "";
+    position: absolute;
+    top: 0.65rem;
+    left: 0;
+    width: 0.4rem;
+    height: 0.4rem;
+    border-radius: 999px;
+    background: var(--color-link);
+}
+
+.planner-tip {
+    border-left: 4px solid var(--color-link);
+    padding-left: 1rem;
+}
+
+.plan-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 2rem;
+}
+
+.nutrition-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.nutrition-header,
+.nutrition-form,
+.nutrition-log,
+.nutrition-custom,
+.nutrition-estimate,
+.nutrition-total,
+.nutrition-entry-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.nutrition-grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.nutrition-actions,
+.nutrition-custom-grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.nutrition-entry {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-top: 1px solid var(--border-primary);
+}
+
+.nutrition-entries {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
 .training-plan-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -68,6 +238,13 @@ h3,.training-plan-grid {
     gap: 0.5rem;
     align-items: center;
     justify-content: space-between;
+}
+
+.plan-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: flex-start;
 }
 
 .plan-card-header p:first-of-type, .plan-card-header i {
@@ -100,6 +277,17 @@ h3,.training-plan-grid {
 
 .exercise-name p {
     font-weight: 400;
+}
+
+.exercise-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.exercise-note {
+    color: var(--color-link);
+    line-height: 1.2rem;
 }
 
 .weight-input {
@@ -226,6 +414,23 @@ button.help-icon:hover {
     .plan-card-header p:first-of-type, .plan-card-header i {
         font-size: 0.875rem;
         line-height: 1.25rem;
+    }
+
+    .planner-option-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .planner-columns {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .nutrition-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .nutrition-actions,
+    .nutrition-custom-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 }
 

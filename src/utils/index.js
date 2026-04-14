@@ -401,6 +401,12 @@ export const exerciseDescriptions = {
     "Glute bridges": "Lie on your back with knees bent and feet on the ground. Lift your hips by contracting your glutes, creating a straight line from shoulders to knees.",
     "Bodyweight squats": "Perform a regular squat, but pause for 2-3 seconds at the bottom before standing back up. Feet shoulder width apart.",
     "Bodyweight RDLs": "Stand on one leg, hinge at the hips to lower your torso to horizontal while extending the other leg behind you, and return to a standing position by engaging your hamstrings and glutes. Microbend the leg still on the ground as you complete the exercise.",
+    "Brisk treadmill walk": "Walk at a brisk pace that raises your heart rate while still letting you breathe through your nose and hold a short conversation.",
+    "Bike intervals": "Pedal hard for the work interval, then slow down for the recovery interval. Keep your posture tall and let the easy intervals bring your breathing back under control.",
+    "Bodyweight step ups": "Step onto a sturdy bench or box, drive through the whole foot, and stand tall before lowering under control.",
+    "Dead bug": "Lie on your back with your core braced and lower opposite arm and leg slowly while keeping your lower back gently pressed into the floor.",
+    "March in place": "Stand tall and drive your knees up rhythmically while pumping your arms to raise your heart rate without needing equipment.",
+    "High knees": "Run in place with quick ground contact and knees rising toward hip height to create a short, intense conditioning interval.",
 
     "Barbell bench press": "Lie on a flat bench and lower a barbell to your chest, flaring your elbows between a 45 - 60 degree angle, then press it back up using your chest muscles. Hands should be 1.5 times your shoulder width apart.",
     "Incline dumbbell press": "Lie on an incline bench and press dumbbells upwards, focusing on the upper part of your chest.",
