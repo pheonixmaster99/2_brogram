@@ -12,8 +12,8 @@ export default function Layout(props){
     const footer = (
         <footer>
             <p>Built by <a href="https://www.smoljames.com"
-             target="_blank">KhamoshMehta</a><br/><a href="https://www.fantacss.smoljames.com" 
-             target="_blank">FantaCSS</a></p>
+             target="_blank" rel="noreferrer">KhamoshMehta</a><br/><a href="https://www.fantacss.smoljames.com" 
+             target="_blank" rel="noreferrer">FantaCSS</a></p>
         </footer>
 
     ) 

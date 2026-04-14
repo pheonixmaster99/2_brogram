@@ -1,101 +1,130 @@
-import { useState, useEffect } from 'react'
-import {workoutProgram as training_plan} from '../utils/index.js'
-import WorkoutCard from './WorkoutCard.jsx'
+import { useEffect, useMemo, useState } from "react"
+import WorkoutCard from "./WorkoutCard.jsx"
+import { buildPersonalizedProgram, buildProfileStorageKey, getEquipmentLabel } from "../utils/programBuilder.js"
 
-export default function Grid() {
-    const [ savedWorkouts, setSavedWorkouts ] = useState(null)
-    const { selectedWorkout, setSelectedWorkout } = useState(null)
-    const completedWorkouts = Object.keys(savedWorkouts || {}).filter((val) => {
+const iconMap = {
+    "Push": "fa-dumbbell",
+    "Pull": "fa-weight-hanging",
+    "Legs": "fa-bolt",
+    "Upper": "fa-dumbbell",
+    "Lower": "fa-bolt",
+    "Full Body": "fa-fire",
+    "Conditioning": "fa-heart-pulse",
+    "Recovery": "fa-heart-pulse",
+}
+
+export default function Grid(props) {
+    const { profile } = props
+    const [savedWorkouts, setSavedWorkouts] = useState({})
+    const [selectedWorkout, setSelectedWorkout] = useState(null)
+
+    const { recommendation, program } = useMemo(() => buildPersonalizedProgram(profile), [profile])
+    const storageKey = useMemo(() => buildProfileStorageKey(profile), [profile])
+
+    const completedWorkouts = Object.keys(savedWorkouts).filter((val) => {
         const entry = savedWorkouts[val]
-        return entry.isComplete
+        return entry?.isComplete
     })
 
     function handleSave(index, data) {
-        // save to local storage and modify the saved workouts state.
-        // newObj keeps track of every previous savedWorkout while modifying the current index we are fiddling with. 
         const newObj = {
             ...savedWorkouts,
             [index]: {
                 ...data,
-                isComplete: !!data.isComplete || !!savedWorkouts?.[index]?.isComplete // Sets 'isComplete' to true if 'data.isComplete' is truthy, otherwise falls back to 'savedWorkouts[index]?.isComplete' if it exists and is truthy
-            }
+                isComplete: !!data.isComplete || !!savedWorkouts?.[index]?.isComplete,
+            },
         }
 
-        setSavedWorkout(newObj)
-        localStorage.setItem('brogram', JSON.stringify(newObj))
+        setSavedWorkouts(newObj)
+        localStorage.setItem(storageKey, JSON.stringify(newObj))
         setSelectedWorkout(null)
     }
 
     function handleComplete(index, data) {
-        // complete a workout (so basically we modify the completed status)
-        const newObj = { ...data }
-        newObj.isComplete = true
-        handleSave(index, newObj)
+        handleSave(index, {
+            ...data,
+            isComplete: true,
+        })
     }
 
     useEffect(() => {
-        if (!localStorage) {return}
-        let savedData = {}
-        if (localStorage.getItem('brogram')) {
-            savedData = JSON.parse(localStorage.getItem('brogram'))
+        const savedData = localStorage.getItem(storageKey)
+
+        if (!savedData) {
+            setSavedWorkouts({})
+            setSelectedWorkout(null)
+            return
         }
-        setSavedWorkouts(savedData)
-    }, [])
+
+        try {
+            setSavedWorkouts(JSON.parse(savedData))
+        } catch {
+            setSavedWorkouts({})
+        }
+
+        setSelectedWorkout(null)
+    }, [storageKey])
 
     return (
-        <div className="training-plan-grid">
-            {
-               Object.keys(training_plan).map((workout, workoutIndex) => {
-                const isLocked = workoutIndex === 0 ? 
-                    false :
-                    !completedWorkouts.includes(`${workoutIndex - 1}`)
-                
-                
-                const type = workoutIndex % 3 === 0 ? 
-                 'Push' : workoutIndex % 3 === 1 ? 'Pull' : 'Legs'
+        <>
+            <section className="plan-summary card">
+                <p className="planner-eyebrow">Your 4-week plan</p>
+                <h3>{recommendation.split}</h3>
+                <p>
+                    This tracker now follows your selected profile: {recommendation.goalLabel.toLowerCase()}, {profile.experience}, {profile.days} training days per week, using {getEquipmentLabel(profile.equipment).toLowerCase()}.
+                </p>
+            </section>
 
-                const trainingPlan = training_plan[workoutIndex]
-                const dayNum = ((workoutIndex / 8) <= 1) ? '0' + (workoutIndex + 1) : workoutIndex + 1
+            <div className="training-plan-grid">
+                {program.map((session, workoutIndex) => {
+                    const isLocked = workoutIndex === 0 ? false : !completedWorkouts.includes(`${workoutIndex - 1}`)
+                    const dayNum = session.dayNumber < 10 ? `0${session.dayNumber}` : session.dayNumber
+                    const iconClass = iconMap[session.label] || "fa-dumbbell"
+                    const icon = <i className={`fa-solid ${iconClass}`}></i>
 
-                //* Shows a lock icon, if workout is locked, otherwise we choose an icon based on the workoutIndex
-                        // We display icons of a dumbell, weight-handing, or bolt if isLocked = false 
-                        // Displaying the icons on the app, required us to copy the font awesome link form cdnjs website.*/}                   
-                const icon =  workoutIndex % 3 === 0 ? (
-                                <i className='fa-solid fa-dumbell'></i>
-                            ) : (
-                                workoutIndex % 3 === 1 ? (
-                                    <i className='fa-solid fa-weight-hanging'></i>
+                    if (workoutIndex === selectedWorkout) {
+                        return (
+                            <WorkoutCard
+                                dayNum={dayNum}
+                                handleComplete={handleComplete}
+                                handleSave={handleSave}
+                                icon={icon}
+                                key={workoutIndex}
+                                savedWeights={savedWorkouts?.[workoutIndex]?.weights}
+                                trainingPlan={session}
+                                type={session.label}
+                                weekNumber={session.weekNumber}
+                                workoutIndex={workoutIndex}
+                            />
+                        )
+                    }
 
-                                ) : (
-                                    <i className='fa-solid fa-bolt'></i>
-                                )
-
-                            )
-
-                if (workoutIndex === selectedWorkout) {
                     return (
-                     <WorkoutCard savedWeights={savedWorkouts?.[workoutIndex]?.weights} handleSave={handleSave} handleComplete={handleComplete} key={workoutIndex} trainingPlan={trainingPlan} type={type} workoutIndex={workoutIndex} icon={icon} dayNum={dayNum} />
+                        <button
+                            className={`card plan-card ${isLocked ? "inactive" : ""}`}
+                            key={workoutIndex}
+                            onClick={() => {
+                                if (isLocked) {
+                                    return
+                                }
+
+                                setSelectedWorkout(workoutIndex)
+                            }}
+                            type="button"
+                        >
+                            <div className="plan-card-header">
+                                <p>Day {dayNum}</p>
+                                {isLocked ? <i className="fa-solid fa-lock"></i> : icon}
+                            </div>
+
+                            <div className="plan-card-body">
+                                <h4><b>{session.label}</b></h4>
+                                <p>Week {session.weekNumber}</p>
+                            </div>
+                        </button>
                     )
-                }
-
-            return (
-                    <button onClick={() => {
-                        if (isLocked) { return }
-                        setSelectedWorkout(workoutIndex)
-                    }} className={'card plan-card  ' + (isLocked ? 'inactive' : '')} key={workoutIndex}>
-                        <div className='plan-card-header'>
-                            <p>Day {dayNum}</p>
-                            {isLocked ? (
-                                <i className='fa-solid fa-lock'></i>
-                            ) : (icon)}
-                        </div>
-
-                        <div className='plan-card-header'>
-                            <h4><b>{type}</b></h4>
-                        </div>
-                    </button>
-                )
-            })}
-        </div>
+                })}
+            </div>
+        </>
     )
 }

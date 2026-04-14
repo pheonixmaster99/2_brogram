@@ -3,15 +3,16 @@ import Modal from "./Modal"
 import { exerciseDescriptions } from "../utils"
 
 export default function WorkoutCard(props) {
-    const {trainingPlan, workoutIndex, type, dayNum, icon, savedWeights, handleSave, handleComplete} = props
+    const {trainingPlan, workoutIndex, type, dayNum, icon, savedWeights, handleSave, handleComplete, weekNumber} = props
 
-    {/* || -> or "short-circuit" that checks if trainingPlan exists, if so we destructure out of it. Otherwise, instead of an error, we have an empty object */}
     const { warmup, workout } = trainingPlan || {}
-
-    /*Variable tied to a user interaction inside of react, change to a react stateful variable instead of a traditional variable */
     const [showExerciseDescription, setShowExerciseDescription] = useState(null)
-
     const [ weights, setWeights ] = useState(savedWeights || {})
+    const trackedExercises = workout.filter(({ tracksWeight = true }) => tracksWeight)
+    const hasCompletedWeights = trackedExercises.every(({ name }) => {
+        const value = weights[name]
+        return typeof value === 'string' && value.trim().length > 0
+    })
 
     function handleAddWeight(title, weight) {
         const newObj = {
@@ -30,6 +31,7 @@ export default function WorkoutCard(props) {
             <div className="workout-card card">
                 <div className="plan-card-header">
                     <p>Day {dayNum}</p>
+                    <p>Week {weekNumber}</p>
                     {icon}
                 </div>
 
@@ -49,7 +51,12 @@ export default function WorkoutCard(props) {
                     return (
                         <React.Fragment key={warmupIndex}>
                             <div className="exercise-name">
-                                <p>{warmupIndex + 1}. {warmupExercise.name}</p>
+                                <div className="exercise-copy">
+                                    <p>{warmupIndex + 1}. {warmupExercise.name}</p>
+                                    {warmupExercise.substitutionNote ? (
+                                        <small className="exercise-note">{warmupExercise.substitutionNote}</small>
+                                    ) : null}
+                                </div>
                                 <button onClick={() => {
                                     setShowExerciseDescription({
                                        name:warmupExercise.name,
@@ -78,7 +85,12 @@ export default function WorkoutCard(props) {
                     return (
                         <React.Fragment key={wIndex}>
                             <div className="exercise-name">
-                                <p>{wIndex + 1}. {workoutExercise.name}</p>
+                                <div className="exercise-copy">
+                                    <p>{wIndex + 1}. {workoutExercise.name}</p>
+                                    {workoutExercise.substitutionNote ? (
+                                        <small className="exercise-note">{workoutExercise.substitutionNote}</small>
+                                    ) : null}
+                                </div>
                                 <button onClick={() => {
                                     setShowExerciseDescription({
                                        name:workoutExercise.name,
@@ -90,10 +102,14 @@ export default function WorkoutCard(props) {
                             </div>
                             <p className="exercise-info">{workoutExercise.sets}</p>
                             <p className="exercise-info">{workoutExercise.reps}</p>
-                            <input value={weights[workoutExercise.name] || ''} onChange={(e) => {
-                                handleAddWeight(workoutExercise.name, e.target.value)
-                            }} 
-                            className="weight-input" placeholder="14"/>
+                            {workoutExercise.tracksWeight === false ? (
+                                <input className="weight-input" disabled placeholder="N/A" />
+                            ) : (
+                                <input value={weights[workoutExercise.name] || ''} onChange={(e) => {
+                                    handleAddWeight(workoutExercise.name, e.target.value)
+                                }} 
+                                className="weight-input" placeholder="14"/>
+                            )}
                         </React.Fragment>
                     )
                 })}
@@ -105,7 +121,7 @@ export default function WorkoutCard(props) {
                 }>Save & Exit</button>
                 <button onClick= {() =>
                     handleComplete(workoutIndex, { weights })
-                } disabled={Object.keys(weights).length !== workout.length}
+                } disabled={!hasCompletedWeights}
                 >Complete</button>
 
             </div>
