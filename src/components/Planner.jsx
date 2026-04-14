@@ -23,9 +23,11 @@ const equipmentOptions = [
 export default function Planner(props) {
     const { profile, onProfileChange } = props
     const { goal, experience, days } = profile
+    // The recommendation is fully derived from the user's current profile choices.
     const recommendation = buildRecommendation(profile)
 
     function updateProfile(changes) {
+        // The parent owns the profile state, so this component only sends partial updates upward.
         onProfileChange({
             ...profile,
             ...changes,
@@ -82,6 +84,7 @@ export default function Planner(props) {
                     <div className="planner-days">
                         {trainingDays.map((value) => (
                             <button
+                                // Days are rendered as buttons instead of radios so the active option can feel more like a quick picker.
                                 className={days === value ? "card-button planner-day-button is-active" : "card-button planner-day-button"}
                                 key={value}
                                 onClick={() => updateProfile({ days: value })}

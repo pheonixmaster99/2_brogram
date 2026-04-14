@@ -19,6 +19,7 @@ export default function Grid(props) {
     const [selectedWorkout, setSelectedWorkout] = useState(null)
 
     const { recommendation, program } = useMemo(() => buildPersonalizedProgram(profile), [profile])
+    // Saved workout data is isolated per profile so a 3-day beginner plan does not clash with a 5-day gym plan.
     const storageKey = useMemo(() => buildProfileStorageKey(profile), [profile])
 
     const completedWorkouts = Object.keys(savedWorkouts).filter((val) => {

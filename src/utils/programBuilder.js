@@ -1,6 +1,7 @@
 import { workoutProgram } from "./index.js"
 import { buildRecommendation } from "./planner.js"
 
+// The original 30-day Brogram data acts as the exercise pool for every personalized split.
 const pushDays = Object.values(workoutProgram).filter((_, index) => index % 3 === 0)
 const pullDays = Object.values(workoutProgram).filter((_, index) => index % 3 === 1)
 const legDays = Object.values(workoutProgram).filter((_, index) => index % 3 === 2)
@@ -159,6 +160,7 @@ function resolveExercise(exercise, equipment) {
 }
 
 function adaptWorkout(workout, equipment) {
+    // We resolve swaps first, then remove duplicates in case two exercises collapse into the same fallback move.
     return {
         ...workout,
         warmup: mergeUniqueExercises(workout.warmup.map((exercise) => resolveExercise(exercise, equipment))),
@@ -299,6 +301,7 @@ export function getEquipmentLabel(equipment) {
 }
 
 export function buildProfileStorageKey(profile) {
+    // Each planner profile gets its own saved-progress bucket so users can switch plans without overwriting history.
     return `brogram:${profile.goal}:${profile.experience}:${profile.days}:${profile.equipment}`
 }
 
@@ -311,6 +314,7 @@ export function buildPersonalizedProgram(profile) {
     const weeks = 4
     const program = []
 
+    // Repeat the chosen weekly structure across 4 weeks while preserving per-session variation from the source pool.
     for (let weekIndex = 0; weekIndex < weeks; weekIndex += 1) {
         trainingDays.forEach((session, sessionIndex) => {
             const normalizedLabel = normalizeSessionLabel(session, profile.goal)

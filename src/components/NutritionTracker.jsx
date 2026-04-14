@@ -48,6 +48,7 @@ export default function NutritionTracker() {
     const [lookupMessage, setLookupMessage] = useState("")
     const [customFood, setCustomFood] = useState(defaultCustomFood)
 
+    // USDA results temporarily override the local/custom estimate so the user can choose the fresher source explicitly.
     const localEstimate = useMemo(() => estimateFoodCalories(foodName, customFoods), [customFoods, foodName])
     const estimate = activeEstimate || localEstimate
     const foodOptions = useMemo(() => getFoodOptions(customFoods), [customFoods])
@@ -70,6 +71,7 @@ export default function NutritionTracker() {
     }, [customFoods])
 
     useEffect(() => {
+        // Changing the search text should clear any previous USDA result so the estimate matches the current input.
         setActiveEstimate(null)
         setLookupStatus("idle")
         setLookupMessage("")
