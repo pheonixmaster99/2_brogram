@@ -1,5 +1,6 @@
 const USDA_API_URL = "https://api.nal.usda.gov/fdc/v1/foods/search"
 
+// This local database keeps nutrition tracking usable even when there is no API key or network connection.
 export const foodDatabase = {
     "apple": { calories: 95, protein: 0.5, carbs: 25, fats: 0.3, serving: "1 medium apple" },
     "banana": { calories: 105, protein: 1.3, carbs: 27, fats: 0.4, serving: "1 medium banana" },
@@ -31,6 +32,7 @@ function normalizeFoodName(foodName) {
 }
 
 function buildFoodEntry(match, data, source = "local") {
+    // Normalizing every source into one shape keeps the UI logic the same for local, custom, and USDA foods.
     return {
         match,
         source,
@@ -71,6 +73,7 @@ export function estimateFoodCalories(foodName, customFoods = {}) {
         ...customFoods,
     }
 
+    // Fallback to a loose partial match so entries like "chicken" can still find "chicken breast".
     const partialMatch = Object.entries(combinedFoods).find(([name]) => {
         return name.includes(normalized) || normalized.includes(name)
     })
@@ -118,6 +121,7 @@ export async function searchUsdaFood(foodName) {
         return null
     }
 
+    // USDA returns a larger nutrient array, so we map only the values this tracker currently displays.
     return {
         match: food.description?.toLowerCase() || query.toLowerCase(),
         source: "usda",

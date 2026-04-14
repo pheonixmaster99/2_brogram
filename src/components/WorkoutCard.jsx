@@ -8,6 +8,7 @@ export default function WorkoutCard(props) {
     const { warmup, workout } = trainingPlan || {}
     const [showExerciseDescription, setShowExerciseDescription] = useState(null)
     const [ weights, setWeights ] = useState(savedWeights || {})
+    // Some exercises like conditioning work or bodyweight drills do not track load, so we exclude them from completion rules.
     const trackedExercises = workout.filter(({ tracksWeight = true }) => tracksWeight)
     const hasCompletedWeights = trackedExercises.every(({ name }) => {
         const value = weights[name]
@@ -15,6 +16,7 @@ export default function WorkoutCard(props) {
     })
 
     function handleAddWeight(title, weight) {
+        // We key weights by exercise name so the saved data mirrors the visible workout table.
         const newObj = {
             ...weights, 
             [title]:weight
@@ -103,6 +105,7 @@ export default function WorkoutCard(props) {
                             <p className="exercise-info">{workoutExercise.sets}</p>
                             <p className="exercise-info">{workoutExercise.reps}</p>
                             {workoutExercise.tracksWeight === false ? (
+                                // Substituted bodyweight/cardio movements intentionally skip the load input.
                                 <input className="weight-input" disabled placeholder="N/A" />
                             ) : (
                                 <input value={weights[workoutExercise.name] || ''} onChange={(e) => {

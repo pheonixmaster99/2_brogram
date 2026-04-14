@@ -13,6 +13,7 @@ const defaultProfile = {
 }
 
 function App() {
+  // Load the last-selected planner profile so the app reopens in the same mode the user left it.
   const [profile, setProfile] = useState(() => {
     const savedProfile = localStorage.getItem("brogram-profile")
 
@@ -31,6 +32,7 @@ function App() {
   })
 
   useEffect(() => {
+    // Persisting the profile lets the planner, workout generator, and tracker stay in sync across refreshes.
     localStorage.setItem("brogram-profile", JSON.stringify(profile))
   }, [profile])
 
